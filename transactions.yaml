@@ -1,9 +1,3 @@
-- op: BUY
-  amount: 1000000
-  currency: US
-- op: SELL
-  amount: 1000000
-  currency: US
-- op: BUY
-  amount: 1
+- amount: 1
   currency: FL
+  op: SELL

